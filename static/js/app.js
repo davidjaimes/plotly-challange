@@ -2,7 +2,7 @@
 var fname = "./samples.json"
 
 // Create dropdown menu from individual IDs.
-d3.json(fname).then(function(data) {
+var data = d3.json(fname).then(function(data) {
   var names = data.names
   names.forEach(n => {
     d3.select("#selDataset")
@@ -17,8 +17,7 @@ function defaultPlot(data) {
 
   d3.json(fname).then(function(data) {
 
-    // Print to console, find desired data.
-    var id = "968";
+    var id = "940";
     var ind = data.names.findIndex(d => d === id);
     var values = data.samples[ind].sample_values.slice(0, 10);
     var otu_ids = data.samples[ind].otu_ids.slice(0, 10);
@@ -35,18 +34,23 @@ function defaultPlot(data) {
   });
 };
 
-// Make function for read, and plot data.
-function buildPlot() {
-  d3.json(fname).then(function(data) {
+// On change to the DOM, call getData()
+d3.selectAll("#selDataset").on("change", optionChanged);
 
-    // Print to console, find desired data.
-    var id = "968";
-    var ind = data.names.findIndex(d => d === id);
-    var values = data.samples[ind].sample_values.slice(0, 10);
-    var otu_ids = data.samples[ind].otu_ids.slice(0, 10);
-    var otu_labels = data.samples[ind].otu_labels.slice(0, 10);
-    console.log(otu_ids)
-  });
+// Function called by DOM changes
+function optionChanged() {
+  var dropdownMenu = d3.select("#selDataset");
+  // Assign the value of the dropdown menu option to a variable
+  var dataset = dropdownMenu.property("value");
+  // Initialize an empty array for the country's data
+  d3.json(fname).then(function(data) {
+    var ind = data.names.findIndex(d => d === dataset);
+    var x = data.samples[ind].sample_values.slice(0, 10);
+    var y = otu_ids = data.samples[ind].otu_ids.slice(0, 10);
+
+    Plotly.restyle("bar", "x", [x.reverse()]);
+    Plotly.restyle("bar", "y", [y.map(d => `OTU ${d}`).reverse()]);
+    });
 }
 
 defaultPlot();
