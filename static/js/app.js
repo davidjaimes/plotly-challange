@@ -1,6 +1,17 @@
 // Save file name to variable
 var fname = "./samples.json"
 
+// Create dropdown menu from individual IDs.
+d3.json(fname).then(function(data) {
+  var names = data.names
+  names.forEach(n => {
+    d3.select("#selDataset")
+    .append("option")
+    .text(n)
+    .property("value", n)
+  });
+});
+
 // Display the default plot
 function defaultPlot(data) {
 
