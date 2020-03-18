@@ -17,11 +17,12 @@ d3.json("./samples.json").then(data => {
       selection.append("h6").text(`${key}: ${value}`);
     });
   };
+
   // Select data from samples.json file and return object with top ten
   // UTOs found in individual.
   function selectData(index) {
     // PARAMETERS
-    // x: sample_values, y: otu_ids, l: otu_labels
+    // x: sample_values, y: otu_ids(int), yl: otu_ids(labels), l: otu_labels
     var ind = data.names.findIndex(d => d === index);
     var x = data.samples[ind].sample_values.slice(0, 10);
     var y = data.samples[ind].otu_ids.slice(0, 10);
