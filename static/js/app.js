@@ -30,7 +30,7 @@ d3.json("./samples.json").then(data => {
     return {
       x: x.reverse(),
       y: y.reverse(),
-      yl: y.map(d => `OTU ${d}`).reverse(),
+      yl: y.map(d => `OTU ${d}`),
       l: l.reverse()};
   };
 
@@ -75,8 +75,11 @@ d3.json("./samples.json").then(data => {
 
     Plotly.restyle("bar", "x", [sel.x]);
     Plotly.restyle("bar", "y", [sel.yl]);
+    Plotly.restyle("bar", "hovertext", [sel.l]);
     Plotly.restyle("bubble", "x", [sel.y]);
     Plotly.restyle("bubble", "y", [sel.x]);
+    Plotly.restyle("bubble", "text", [sel.l]);
+    Plotly.restyle("bubble", "marker", [{size: sel.x, color: sel.y, colorscale: "Earth"}]);
     fillMeta(dataset);
   };
 
