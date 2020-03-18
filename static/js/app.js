@@ -1,5 +1,6 @@
-// Create dropdown menu from individual IDs to index html file.
 d3.json("./samples.json").then(data => {
+
+  // Create dropdown menu from individual IDs to index html file.
   data.names.forEach(n => {
     d3.select("#selDataset")
     .append("option")
@@ -7,6 +8,15 @@ d3.json("./samples.json").then(data => {
     .property("value", n)
   });
 
+  // Fill metadate in Demographic info area.
+  function fillMeta(index) {
+    var selection = d3.select("#sample-metadata");
+    selection.html("");
+    var ind = data.names.findIndex(d => d === index);
+    Object.entries(data.metadata[ind]).forEach(([key, value]) => {
+      selection.append("h6").text(`${key}: ${value}`);
+    });
+  };
   // Select data from samples.json file and return object with top ten
   // UTOs found in individual.
   function selectData(index) {
@@ -18,21 +28,37 @@ d3.json("./samples.json").then(data => {
     var l = data.samples[ind].otu_labels.slice(0, 10);
     return {
       x: x.reverse(),
-      y: y.map(d => `OTU ${d}`).reverse(),
+      y: y.reverse(),
+      yl: y.map(d => `OTU ${d}`).reverse(),
       l: l.reverse()};
   };
 
   // Display the default plot
   function defaultPlot() {
-    var selection = selectData("940");
+    // Default value is "940" for selection, first in array.
+    var selection = selectData(data.names[0]);
+
+    // Gather data for bar plot.
     var barData = [{
       x: selection.x,
-      y: selection.y,
+      y: selection.yl,
       type: "bar",
       orientation: "h",
       hovertext: selection.l
     }];
+
+    // Gather data for bubble chart.
+    var bubbleData = [{
+      x: selection.y,
+      y: selection.x,
+      marker: {size: selection.x, color: selection.y, colorscale: "Earth"},
+      mode: "markers",
+      text: selection.l
+    }];
+
     Plotly.newPlot("bar", barData);
+    Plotly.newPlot("bubble", bubbleData);
+    fillMeta(data.names[0]);
   };
 
   // On change to the DOM, call optionChanged()
@@ -40,15 +66,18 @@ d3.json("./samples.json").then(data => {
 
   // Function called by DOM changes
   function optionChanged() {
-    var dropdownMenu = d3.select("#selDataset");
+
     // Assign the value of the dropdown menu option to a variable
+    var dropdownMenu = d3.select("#selDataset");
     var dataset = dropdownMenu.property("value");
     var sel = selectData(dataset);
 
     Plotly.restyle("bar", "x", [sel.x]);
-    Plotly.restyle("bar", "y", [sel.y]);
-
-  }
+    Plotly.restyle("bar", "y", [sel.yl]);
+    Plotly.restyle("bubble", "x", [sel.y]);
+    Plotly.restyle("bubble", "y", [sel.x]);
+    fillMeta(dataset);
+  };
 
   defaultPlot();
 });
