@@ -84,4 +84,7 @@ d3.json("./samples.json").then(data => {
   };
 
   defaultPlot();
+  
+}).catch(function(error) {
+  console.log(error);
 });
