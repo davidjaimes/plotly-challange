@@ -81,9 +81,7 @@ d3.json("./samples.json").then(data => {
     Plotly.restyle("bubble", "text", [sel.l]);
     Plotly.restyle("bubble", "marker", [{size: sel.x, color: sel.y, colorscale: "Earth"}]);
     fillMeta(dataset);
-  }.catch(function(error) {
-    console.log(error);
-  });
+  };
 
   defaultPlot();
 
